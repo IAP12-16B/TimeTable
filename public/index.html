@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head lang="de">
+	<meta charset="UTF-8">
+	<title>Stundenplan</title>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<div class="outer-wrapper">
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<span class="navbar-brand">Stundenplan</span>
+			</div>
+		</div>
+	</nav>
+	<div class="inner-wrapper">
+		<div class="panel panel-default" id="timetable-panel">
+			<div class="panel-heading" id="timetable-head">
+				<span class="title">Stundenplan</span>
+			</div>
+
+			<div class="panel-body" id="timetable-body">
+				<div class="form-group job-chooser">
+					<label id="job-chooser">
+						<span>Beruf auswählen</span>
+					</label>
+				</div>
+				<div class="form-group class-chooser">
+					<label id="class-chooser">
+						<span>Klasse auswählen</span>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="js/mootools.js"></script>
+<script src="js/helpers.js"></script>
+<script src="js/TimeTableFetcher.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
