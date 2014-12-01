@@ -1,0 +1,106 @@
+\RequirePackage[l2tabu, orthodox]{nag}
+\documentclass[11pt,a4paper,titlepage,portrait,ngerman,final]{scrartcl}
+\pdfgentounicode=1
+\pdfcompresslevel=9
+
+\RequirePackage[
+	pdftex,
+	plainpages=true,
+	breaklinks=true,
+	colorlinks=false,
+	linktoc=all,
+	linkcolor=false,
+	pageanchor=true,
+	unicode=true,
+	pdfborder={0 0 0},
+	hidelinks=true,
+	pdfpagetransition=Dissolve,
+	pdfdisplaydoctitle=true,
+	final=true
+]{hyperref}
+
+
+% INFO SECTION %
+\def \docTitle{Stundenplan}
+\def \docSubtitle{M133}
+\def \docAuthor{\href{http://kije.ch}{kije}}
+\def \docDate{\today}
+
+\hypersetup{
+	pdftitle=\docTitle,
+	pdfsubject=\docSubtitle,
+	pdfauthor=\docAuthor,
+}
+
+% PACKAGES
+%\usepackage[osf]{mathpazo} 
+\usepackage[default]{raleway}% Font
+\usepackage[pdftex]{graphicx}
+\usepackage{hfoldsty}
+\usepackage{thumbpdf}
+\usepackage{amsmath}
+\usepackage[ngerman]{babel}
+\usepackage{siunitx}
+\usepackage{cleveref}
+\usepackage{fancyhdr}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{ngerman}
+\usepackage[a4paper]{geometry}
+\usepackage[
+	activate=true,
+	babel=true,
+	kerning=all, 
+	tracking=all,
+	letterspace=90
+]{microtype}
+\usepackage{fixltx2e}
+\usepackage{currfile}
+\usepackage{caption}
+\usepackage{xcolor}
+\usepackage{lastpage}
+\usepackage{ellipsis}
+\usepackage{bigfoot}
+\usepackage{lipsum}
+
+\setkomafont{disposition}{\normalfont}
+\setkomafont{title}{\normalfont\bfseries\scshape\Huge}
+\setkomafont{subtitle}{\normalfont\scshape\bfseries\normalsize}
+\setkomafont{dictumauthor}{\normalfont\bfseries\small}
+\setkomafont{section}{\normalfont\bfseries\scshape\Large}
+\setkomafont{subsection}{\normalfont\bfseries\scshape\large}
+\setkomafont{subsubsection}{\normalfont\bfseries\normalsize}
+\setkomafont{descriptionlabel}{\normalfont\bfseries\small}
+
+
+
+% DOC INFO 
+\title{\docTitle}
+\subtitle{\docSubtitle}
+\author{\large\scshape\docAuthor}
+\date{\normalsize\scshape\docDate}
+
+% HEADER & FOOTER
+\pagestyle{fancy}
+\lhead{\docTitle}
+\chead{\textbf{\leftmark}}
+\rhead{\docSubtitle}
+\lfoot{\currfilename}
+\cfoot{\textbf{\docAuthor}}
+\rfoot{Seite \thepage\ von \pageref*{LastPage} }
+
+
+% Make German ;)
+\renewcommand{\figurename}{Abbildung}
+
+\begin{document}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+\section{Konzept}
+\subsection{Um was geht es?}
+\subsection{Format der Daten}
+\subsection{Umgesetzte Zusatzfunktionen}
+\section{Testplan}
+\end{document}
