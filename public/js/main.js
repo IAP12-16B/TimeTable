@@ -2,7 +2,18 @@ var TimeTable = new Class(
 	{
 		Implements: [Events],
 
-		Binds: ['eventReady', 'eventResize', 'updateJobs', 'updateClasses', 'updateTimeTable', 'eventJobChanged', 'eventClassChanged'],
+		Binds: [
+			'eventReady',
+			'eventResize',
+			'updateJobs',
+			'updateClasses',
+			'updateTimeTable',
+			'eventJobChanged',
+			'eventClassChanged',
+			'emptyTable',
+			'persistParams',
+			'restoreParams'
+		],
 
 		dataFetcher: undefined,
 
@@ -25,8 +36,13 @@ var TimeTable = new Class(
 		 * @fires init
 		 */
 		initialize: function () {
+			// define language we want to use (for loclization/date stuff)
+			Locale.use('de-CH');
+
+			// init data fetcher
 			this.dataFetcher = new TimeTableFetcher();
 
+			// create html table
 			this.table = new HtmlTable(
 				{
 					properties: {
@@ -36,14 +52,18 @@ var TimeTable = new Class(
 				}
 			);
 
+			// create selects
 			this.selectJob = new Element('select', {'class': 'form-control'});
 			this.selectClass = new Element('select', {'class': 'form-control'});
 
+			// add event listeners to selects
 			this.selectJob.addEvent('change', this.eventJobChanged);
 			this.selectClass.addEvent('change', this.eventClassChanged);
 
+			// create date (used for navigation in time)
 			this.date = new Date();
 
+			// add DOMReady event
 			document.addEvent('domready', this.eventReady);
 			window.addEvents(
 				{
@@ -51,11 +71,34 @@ var TimeTable = new Class(
 				}
 			);
 
+			this.addEvents(
+				{
+					'jobChanged': this.persistJob,
+					'classChanged': this.persistClass,
+					'ready': this.restoreParams
+				}
+			);
+
 			this.fireEvent('init');
 		},
 
+		persistJob: function(job_id) {
+			console.log(job_id);
+			Cookie.write('job', job_id, {duration: 30});
+		},
+
+		persistClass: function(class_id) {
+			console.log(class_id);
+			Cookie.write('class', class_id, {duration: 30});
+		},
+
+		restoreParams: function () {
+			this.changeJob(Cookie.read('job'));
+			this.changeClass(Cookie.read('class'));
+		},
+
 		/**
-		 * Event Ready. Called when DOM is ready. Now we can create Elements and finish initialisation
+		 * Event Ready. Called when DOM is ready. Now we can create/select Elements and finish initialisation
 		 * @fires ready
 		 */
 		eventReady: function () {
@@ -88,9 +131,6 @@ var TimeTable = new Class(
 			// update the date display
 			this.updateHeaderDate();
 
-			// fill data in selects
-			this.dataFetcher.fetchJobs(this.updateJobs);
-			this.dataFetcher.fetchClasses(this.updateClasses);
 
 			// now, we are ready
 			this.fireEvent('ready');
@@ -141,61 +181,67 @@ var TimeTable = new Class(
 			);
 
 			this.selectClass.empty().adopt(class_options);
-			this.table.empty();
+			this.emptyTable();
 
 			this.fireEvent('updatedClasses', classes);
 		},
 
 		updateTimeTable: function (tables) {
-			this.table.empty();
+			this.emptyTable();
 			var table_days = {};
 
 			if (tables) {
 				// splitting array by weekday
 				tables.each(
 					function (table) {
-						if (!(table.tafel_wochentag in table_days)) {
+						if (!(
+							table.tafel_wochentag in table_days
+							)) {
 							table_days[table.tafel_wochentag] = [];
 						}
 						table_days[table.tafel_wochentag].push(table);
 					}.bind(this)
 				);
 
-				Object.each(table_days, function (tables, weekday) {
-					if (tables && tables.length > 0) {
-						var first = tables.pick();
-						var date = first.tafel_datum;
+				Object.each(
+					table_days, function (tables, weekday) {
+						if (tables && tables.length > 0) {
+							var first = tables.pick();
+							var date = Date.parse(first.tafel_datum);
 
-						// make date heading row
-						this.table.push(
-							[
-								{
-									content: date, // todo format
-									properties: {
-										colspan: this.table.options.headers.length+1,
-										'class': 'info date-heading'
-									}
-								}
-							],
-							null,
-							null,
-							'th'
-						);
-
-						tables.each(function (table) {
+							// make date heading row
 							this.table.push(
 								[
-									table.tafel_von,
-									table.tafel_bis,
-									table.tafel_longfach,
-									table.tafel_lehrer,
-									table.tafel_raum,
-									table.tafel_kommentar
-								]
+									{
+										content:    date.format("%A"),
+										properties: {
+											colspan: this.table.options.headers.length + 1,
+											'class': 'info date-heading'
+										}
+									}
+								],
+								null,
+								null,
+								'th'
 							);
-						}.bind(this));
-					}
-				}, this);
+
+							tables.each(
+								function (table) {
+									this.table.push(
+										[
+											table.tafel_von,
+											table.tafel_bis,
+											table.tafel_longfach,
+											table.tafel_lehrer,
+											table.tafel_raum,
+											table.tafel_kommentar
+										]
+									);
+								}.bind(this)
+							);
+						}
+					}, this
+				);
 			}
 		},
 
@@ -218,11 +264,13 @@ var TimeTable = new Class(
 			var selected_option = select.getElement('option:selected');
 			var selected_job_id = selected_option.get('value');
 
-			if (selected_job_id) {
-				var selected_job = selected_option.retrieve('job');
+			this.changeJob(selected_job_id);
+		},
 
-				this.dataFetcher.fetchClasses(this.updateClasses, selected_job_id);
-				this.fireEvent('jobChanged', selected_job);
+		changeJob: function (job_id) {
+			if (job_id) {
+				this.dataFetcher.fetchClasses(this.updateClasses, job_id);
+				this.fireEvent('jobChanged', job_id);
 			} else {
 				this.dataFetcher.fetchClasses(this.updateClasses);
 				this.fireEvent('jobChanged');
@@ -234,20 +282,26 @@ var TimeTable = new Class(
 			var selected_option = select.getElement('option:selected');
 			var selected_class_id = selected_option.get('value');
 
-			if (selected_class_id) {
-				var selected_class = selected_option.retrieve('class');
+			this.changeClass(selected_class_id);
+		},
 
+		changeClass: function (class_id) {
+			if (class_id) {
 				this.dataFetcher.fetchTable(
 					this.updateTimeTable,
-					selected_class_id,
+					class_id,
 					this.date.get('week'),
 					this.date.get('year')
 				);
-				this.fireEvent('classChanged', selected_class);
+				this.fireEvent('classChanged', class_id);
 			} else {
 				this.updateTimeTable();
 				this.fireEvent('classChanged');
 			}
+		},
+
+		emptyTable: function () {
+			this.table.empty();
 		}
 	}
 );

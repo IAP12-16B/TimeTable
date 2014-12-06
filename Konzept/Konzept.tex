@@ -1,7 +1,7 @@
 \RequirePackage[l2tabu, orthodox]{nag}
 \documentclass[11pt,a4paper,titlepage,portrait,ngerman,final]{scrartcl}
 \pdfgentounicode=1
-\pdfcompresslevel=9
+\pdfcompresslevel=8
 
 \RequirePackage[
 	pdftex,
@@ -23,7 +23,7 @@
 % INFO SECTION %
 \def \docTitle{Stundenplan}
 \def \docSubtitle{M133}
-\def \docAuthor{\href{http://kije.ch}{kije}}
+\def \docAuthor{\href{http://kije.ch}{Kim Jeker}}
 \def \docDate{\today}
 
 \hypersetup{
@@ -67,7 +67,7 @@
 \setkomafont{title}{\normalfont\bfseries\scshape\Huge}
 \setkomafont{subtitle}{\normalfont\scshape\bfseries\normalsize}
 \setkomafont{dictumauthor}{\normalfont\bfseries\small}
-\setkomafont{section}{\normalfont\bfseries\scshape\Large}
+\setkomafont{section}{\newpage\normalfont\scshape\LARGE}
 \setkomafont{subsection}{\normalfont\bfseries\scshape\large}
 \setkomafont{subsubsection}{\normalfont\bfseries\normalsize}
 \setkomafont{descriptionlabel}{\normalfont\bfseries\small}
@@ -87,7 +87,7 @@
 \rhead{\docSubtitle}
 \lfoot{\currfilename}
 \cfoot{\textbf{\docAuthor}}
-\rfoot{Seite \thepage\ von \pageref*{LastPage} }
+\rfoot{Seite \thepage\ von \pageref*{LastPage}}
 
 
 % Make German ;)
@@ -95,12 +95,23 @@
 
 \begin{document}
 \maketitle
-\newpage
 \tableofcontents
 \newpage
 \section{Konzept}
 \subsection{Um was geht es?}
+Mittels \textbf{JavaScript}, \textbf{HTML}, \textbf{CSS} und dem Framework \textbf{Bootstrap} wird eine Stundenplan-Applikation umgesetzt, welche die Stundenpläne der GIBM anzeigt.
+
+\subsection{Ursprung der Daten}
+Die Daten werden von einem externen PHP-Script, welches auf einem Server der GIBM läuft, bereitgestellt.
+\subsubsection*{Interfaces:}
+\begin{description}
+	\item[Berufe]{\url{http://home.gibm.ch/interfaces/133/berufe.php}}
+	\item[Klassen]{\url{http://home.gibm.ch/interfaces/133/klassen.php}}
+	\item[Stundentafel]{\url{http://home.gibm.ch/interfaces/133/tafel.php}}
+\end{description}
+
 \subsection{Format der Daten}
+Die Daten werden im \textbf{JSON}-Format zurückgeiefert.
 \subsection{Umgesetzte Zusatzfunktionen}
 \section{Testplan}
 \end{document}

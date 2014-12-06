@@ -19,6 +19,10 @@ var TimeTableFetcher = new Class(
 		classesRequest: undefined,
 		tableRequest:   undefined,
 
+		/**
+		 * Constructor. Init data fetcher.
+		 * @param options
+		 */
 		initialize: function (options) {
 			this.setOptions(options);
 
@@ -57,7 +61,7 @@ var TimeTableFetcher = new Class(
 		},
 
 		/**
-		 *
+		 * Fetches Jobs an pass it to the provided callback
 		 * @param callback
 		 */
 		fetchJobs: function (callback) {
@@ -68,7 +72,7 @@ var TimeTableFetcher = new Class(
 		},
 
 		/**
-		 *
+		 * Fetches Classes an pass it to the provided callback
 		 * @param callback
 		 * @param job_id
 		 */
@@ -119,9 +123,9 @@ var TimeTableFetcher = new Class(
 			);
 		},
 
-		errorHandler: function(xhr) {
+		errorHandler: function (xhr) {
 			console.error(xhr);
-			alert('Es ist ein Fehler beim abrufen der Daten aufgetreten. \n Status-Text: '+xhr.statusText);
+			alert('Es ist ein Fehler beim abrufen der Daten aufgetreten. \nStatus-Text: ' + xhr.statusText);
 		}
 	}
 );
