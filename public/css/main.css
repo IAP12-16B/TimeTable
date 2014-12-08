@@ -1,4 +1,50 @@
 .inner-wrapper {
-	width: 960px;
+	width: 980px;
 	margin: 1em auto;
+}
+
+@media screen and (max-width: 1000px) {
+	.inner-wrapper {
+		width: auto;
+		margin: 1em 2em;
+		min-width: 300px;
+	}
+
+}
+
+@media screen and (max-width: 700px) {
+	body {
+		font-size: 13px;
+	}
+
+	.form-group label {
+		display: block;
+	}
+
+	.inner-wrapper .timetable tr td+td:last-child,
+	.inner-wrapper .timetable tr th+th:last-child {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	body {
+		font-size: 12px;
+	}
+
+	.inner-wrapper .timetable tr td+td:nth-child(2),
+	.inner-wrapper .timetable tr th+th:nth-child(2) {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 450px) {
+	.inner-wrapper {
+		margin: 1em 0em;
+		padding: 0 1em;
+	}
+	.inner-wrapper .timetable tr td+td:nth-child(4),
+	.inner-wrapper .timetable tr th+th:nth-child(4) {
+		display: none;
+	}
 }
