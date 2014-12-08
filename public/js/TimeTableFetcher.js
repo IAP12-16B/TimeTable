@@ -29,7 +29,7 @@ var TimeTableFetcher = new Class(
 			this.jobsRequest = new Request.JSON(
 				{
 					url: this.options.baseURL + this.options.jobsURL,
-					link:      'ignore',
+					link:      'cancel',
 					method:    'get',
 					secure:    true,
 					onFailure: this.errorHandler
@@ -40,7 +40,7 @@ var TimeTableFetcher = new Class(
 			this.classesRequest = new Request.JSON(
 				{
 					url: this.options.baseURL + this.options.classesURL,
-					link:      'ignore',
+					link:      'cancel',
 					method:    'get',
 					secure:    true,
 					onFailure: this.errorHandler
@@ -51,7 +51,7 @@ var TimeTableFetcher = new Class(
 			this.tableRequest = new Request.JSON(
 				{
 					url: this.options.baseURL + this.options.tableURL,
-					link:      'ignore',
+					link:      'cancel',
 					method:    'get',
 					secure:    true,
 					onFailure: this.errorHandler

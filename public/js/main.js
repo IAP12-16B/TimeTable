@@ -12,8 +12,9 @@ var TimeTable = new Class(
 			'eventClassChanged',
 			'emptyTable',
 			'persistParams',
-			'restoreParams'
+			'prepareSelects'
 		],
+
 
 		dataFetcher: undefined,
 
@@ -38,6 +39,7 @@ var TimeTable = new Class(
 		initialize: function () {
 			// define language we want to use (for loclization/date stuff)
 			Locale.use('de-CH');
+
 
 			// init data fetcher
 			this.dataFetcher = new TimeTableFetcher();
@@ -73,28 +75,53 @@ var TimeTable = new Class(
 
 			this.addEvents(
 				{
-					'jobChanged': this.persistJob,
-					'classChanged': this.persistClass,
-					'ready': this.restoreParams
+					'jobChanged':   this.jobChanged,
+					'classChanged': this.classChanged,
+					'ready':        this.prepareSelects
 				}
 			);
 
 			this.fireEvent('init');
 		},
 
-		persistJob: function(job_id) {
-			console.log(job_id);
+		jobChanged: function (job_id) {
 			Cookie.write('job', job_id, {duration: 30});
+			var job_option = this.selectJob.getElement('.job-' + job_id);
+			if (job_option) {
+				job_option.set('selected', true);
+			}
 		},
 
-		persistClass: function(class_id) {
-			console.log(class_id);
+		classChanged: function (class_id) {
 			Cookie.write('class', class_id, {duration: 30});
+			var class_option = this.selectClass.getElement('.class-' + class_id);
+			if (class_option) {
+				class_option.set('selected', true);
+			}
 		},
 
-		restoreParams: function () {
-			this.changeJob(Cookie.read('job'));
-			this.changeClass(Cookie.read('class'));
+		prepareSelects: function () {
+			var cookie_class = Cookie.read('class');
+			var cookie_job = Cookie.read('job');
+			this.addEvent(
+				'updatedJobs:once', function () {
+					this.addEvent(
+						'updatedClasses:once', function () {
+							if (cookie_class) {
+								this.changeClass(cookie_class);
+							}
+						}
+					);
+
+					if (cookie_job) {
+						this.changeJob(cookie_job);
+					}
+				}.bind(this)
+			);
+
+			this.dataFetcher.fetchJobs(this.updateJobs);
+			this.dataFetcher.fetchClasses(this.updateClasses);
+
 		},
 
 		/**
@@ -151,6 +178,7 @@ var TimeTable = new Class(
 				function (job) {
 					var option = new Element('option', {'value': job.beruf_id, 'text': job.beruf_name});
 					option.store('job', job);
+					option.addClass('job-' + job.beruf_id);
 					job_options.push(option);
 				}.bind(this)
 			);
@@ -174,7 +202,14 @@ var TimeTable = new Class(
 
 			classes.each(
 				function (c) {
-					var option = new Element('option', {'value': c.klasse_id, 'text': c.klasse_longname});
+					var option = new Element(
+						'option',
+						{
+							'value': c.klasse_id,
+							'text':  c.klasse_longname,
+							'class': 'class-' + c.klasse_id
+						}
+					);
 					option.store('class', c);
 					class_options.push(option);
 				}.bind(this)
@@ -187,62 +222,76 @@ var TimeTable = new Class(
 		},
 
 		updateTimeTable: function (tables) {
-			this.emptyTable();
-			var table_days = {};
+			var fx = new Fx.Tween(
+				$(this.table).getElement('tbody'), {
+					transition: Fx.Transitions.Sine,
+					duration:   300
+				}
+			);
+			fx.start('opacity', '1', '0').chain(
+				function () {
+					this.emptyTable();
+					var table_days = {};
 
-			if (tables) {
-				// splitting array by weekday
-				tables.each(
-					function (table) {
-						if (!(
-							table.tafel_wochentag in table_days
-							)) {
-							table_days[table.tafel_wochentag] = [];
-						}
-						table_days[table.tafel_wochentag].push(table);
-					}.bind(this)
-				);
+					if (tables) {
+						// splitting array by weekday
+						tables.each(
+							function (table) {
+								if (!(
+									table.tafel_wochentag in table_days
+									)) {
+									table_days[table.tafel_wochentag] = [];
+								}
+								table_days[table.tafel_wochentag].push(table);
+							}.bind(this)
+						);
 
-				Object.each(
-					table_days, function (tables, weekday) {
-						if (tables && tables.length > 0) {
-							var first = tables.pick();
-							var date = Date.parse(first.tafel_datum);
+						Object.each(
+							table_days, function (tables, weekday) {
+								if (tables && tables.length > 0) {
+									var first = tables.pick();
+									var date = Date.parse(first.tafel_datum);
 
-							// make date heading row
-							this.table.push(
-								[
-									{
-										content:    date.format("%A"),
-										properties: {
-											colspan: this.table.options.headers.length + 1,
-											'class': 'info date-heading'
-										}
-									}
-								],
-								null,
-								null,
-								'th'
-							);
-
-							tables.each(
-								function (table) {
+									// make date heading row
 									this.table.push(
 										[
-											table.tafel_von,
-											table.tafel_bis,
-											table.tafel_longfach,
-											table.tafel_lehrer,
-											table.tafel_raum,
-											table.tafel_kommentar
-										]
+											{
+												content:    date.format("%A, %e%o %B %Y"),
+												properties: {
+													colspan: this.table.options.headers.length + 1,
+													'class': 'info date-heading'
+												}
+											}
+										],
+										null,
+										null,
+										'th'
 									);
-								}.bind(this)
-							);
-						}
-					}, this
-				);
-			}
+
+									tables.each(
+										function (table) {
+											this.table.push(
+												[
+													table.tafel_von,
+													table.tafel_bis,
+													table.tafel_longfach,
+													table.tafel_lehrer,
+													table.tafel_raum,
+													table.tafel_kommentar
+												]
+											);
+										}.bind(this)
+									);
+								}
+							}, this
+						);
+					}
+
+					this.fireEvent('updatedTable', tables);
+
+					fx.start('opacity', '0', '1');
+				}.bind(this)
+			);
 		},
 
 		/**
@@ -294,6 +343,7 @@ var TimeTable = new Class(
 					this.date.get('year')
 				);
 				this.fireEvent('classChanged', class_id);
+
 			} else {
 				this.updateTimeTable();
 				this.fireEvent('classChanged');
