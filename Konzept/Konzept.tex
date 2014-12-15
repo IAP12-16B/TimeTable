@@ -113,5 +113,64 @@ Die Daten werden von einem externen PHP-Script, welches auf einem Server der GIB
 \subsection{Format der Daten}
 Die Daten werden im \textbf{JSON}-Format zurückgeiefert.
 \subsection{Umgesetzte Zusatzfunktionen}
+\begin{itemize}
+\item Klassenwahl in Cookie speichern
+\item Transitions
+\item Applikation ist Mobile-Tauglich
+\end{itemize}
 \section{Testplan}
+\vspace{2.5mm}
+\noindent
+\begin{tabular}{|p{0.3\textwidth}||p{0.63\textwidth}|}
+\hline \rule[-2ex]{0pt}{5.5ex} \textbf{Vorbedingung} & {
+	\begin{list}{\textendash}{\vspace{-5mm}}
+		\item{Webseite ist geöffnet \& Internetverbinung ist vorhanden}
+	\end{list}
+} \\ 
+\hline \rule[-2ex]{0pt}{5.5ex} \textbf{Aktion} & {
+	\begin{list}{\textendash}{\vspace{-5mm}}
+		\item{Der User wählt den Beruf aus.}
+	\end{list}
+} \\ 
+\hline \rule[-2ex]{0pt}{5.5ex} \textbf{Nachbedingung} & {
+	\begin{list}{\textendash}{\vspace{-5mm}}
+		\item{Die Liste mit Klassen hat sich aktualisiert. Nun sind nur noch alle Klassen, welche dem ausgewählten Beruf entspricht, auswählbar.}
+	\end{list}
+}  \\
+\hline \rule[-2ex]{0pt}{5.5ex} \textbf{Aktion} & {
+	\begin{list}{\textendash}{\vspace{-5mm}}
+		\item{Der User wählt eine Klasse aus}
+	\end{list}
+} \\ 
+\hline \rule[-2ex]{0pt}{5.5ex} \textbf{Nachbedingung} & {
+	\begin{list}{\textendash}{\vspace{-5mm}}
+		\item{Der Stundenplan hat sich aktualisiert. Es sind nun die Stunden der aktuellen Klassen sichtbar.}
+	\end{list}
+}  \\
+\hline \rule[-2ex]{0pt}{5.5ex} \textbf{Aktion} & {
+	\begin{list}{\textendash}{\vspace{-5mm}}
+		\item{Der User schliesst den Browser und öffnet Ihn erneut.}
+	\end{list}
+} \\ 
+\hline \rule[-2ex]{0pt}{5.5ex} \textbf{Nachbedingung} & {
+	\begin{list}{\textendash}{\vspace{-5mm}}
+		\item{Nach dem Öffnen sollten wieder der gleiche Beruf und die gleiche Klasse ausgewählt, wie vor dem schliessen.}
+	\end{list}
+}  \\
+\hline \rule[-2ex]{0pt}{5.5ex} \textbf{Ausnahme} & {
+	\begin{list}{\textendash}{\vspace{-5mm}}
+		\item{
+			\textbf{Keine Internetverbindung}
+			
+			Der User erhält eine Meldung.
+		}
+		\item{
+			\textbf{User hat ein Add-On, welches Cookies beim schliessen des Browsers löscht.}
+			
+			Ausgewählter Beruf \& Klasse werden nicht gespeichert.
+		}
+	\end{list}
+}  \\
+\hline 
+\end{tabular}
 \end{document}
